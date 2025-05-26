@@ -1,67 +1,114 @@
-<script>
-  let board = {
-    A1: " ", A2: " ", A3: " ",
-    B1: " ", B2: " ", B3: " ",
-    C1: " ", C2: " ", C3: " "
-  };
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tic Tac Toe</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; }
+    #scoreboard {
+      font-size: 1.2em;
+      margin: 10px;
+    }
+    table { margin: 20px auto; border-collapse: collapse; }
+    td {
+      width: 80px; height: 80px;
+      font-size: 2em;
+      text-align: center;
+      vertical-align: middle;
+      border: 2px solid black;
+      cursor: pointer;
+    }
+    h1, #status { margin: 10px; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Tic Tac Toe (A1–C3)</h1>
 
-  let currentPlayer = "X";
-  let gameOver = false;
-  let score = { X: 0, O: 0 };
+  <div id="scoreboard">
+    <strong>Score:</strong> 
+    Player X: <span id="scoreX">0</span> | 
+    Player O: <span id="scoreO">0</span>
+  </div>
 
-  const statusDiv = document.getElementById("status");
-  const scoreX = document.getElementById("scoreX");
-  const scoreO = document.getElementById("scoreO");
-  const cells = document.querySelectorAll("td");
+  <div id="status">Current Player: X</div>
 
-  const winningCombinations = [
-    ["A1", "A2", "A3"], ["B1", "B2", "B3"], ["C1", "C2", "C3"],
-    ["A1", "B1", "C1"], ["A2", "B2", "C2"], ["A3", "B3", "C3"],
-    ["A1", "B2", "C3"], ["A3", "B2", "C1"]
-  ];
+  <table>
+    <tbody>
+      <tr><td id="A1"></td><td id="A2"></td><td id="A3"></td></tr>
+      <tr><td id="B1"></td><td id="B2"></td><td id="B3"></td></tr>
+      <tr><td id="C1"></td><td id="C2"></td><td id="C3"></td></tr>
+    </tbody>
+  </table>
 
-  function checkWinner() {
-    return winningCombinations.some(combo =>
-      combo.every(cell => board[cell] === currentPlayer)
-    );
-  }
+  <button onclick="resetGame()">Reset Game</button>
 
-  function handleClick(event) {
-    const id = event.target.id;
-    if (board[id] === " " && !gameOver) {
-      board[id] = currentPlayer;
-      event.target.textContent = currentPlayer;
+  <script>
+    let board = {
+      A1: " ", A2: " ", A3: " ",
+      B1: " ", B2: " ", B3: " ",
+      C1: " ", C2: " ", C3: " "
+    };
 
-      if (checkWinner()) {
-        statusDiv.textContent = `Player ${currentPlayer} wins! 🎉`;
-        score[currentPlayer]++;
-        updateScores();
-        gameOver = true;
-      } else if (Object.values(board).every(cell => cell !== " ")) {
-        statusDiv.textContent = "It's a draw!";
-        gameOver = true;
-      } else {
-        currentPlayer = currentPlayer === "X" ? "O" : "X";
-        statusDiv.textContent = `Current Player: ${currentPlayer}`;
+    let currentPlayer = "X";
+    let gameOver = false;
+    let score = { X: 0, O: 0 };
+
+    const statusDiv = document.getElementById("status");
+    const scoreX = document.getElementById("scoreX");
+    const scoreO = document.getElementById("scoreO");
+    const cells = document.querySelectorAll("td");
+
+    const winningCombinations = [
+      ["A1", "A2", "A3"], ["B1", "B2", "B3"], ["C1", "C2", "C3"],
+      ["A1", "B1", "C1"], ["A2", "B2", "C2"], ["A3", "B3", "C3"],
+      ["A1", "B2", "C3"], ["A3", "B2", "C1"]
+    ];
+
+    function checkWinner() {
+      return winningCombinations.some(combo =>
+        combo.every(cell => board[cell] === currentPlayer)
+      );
+    }
+
+    function updateScores() {
+      scoreX.textContent = score.X;
+      scoreO.textContent = score.O;
+    }
+
+    function handleClick(event) {
+      const id = event.target.id;
+      if (board[id] === " " && !gameOver) {
+        board[id] = currentPlayer;
+        event.target.textContent = currentPlayer;
+
+        if (checkWinner()) {
+          statusDiv.textContent = `Player ${currentPlayer} wins! 🎉`;
+          score[currentPlayer]++;
+          updateScores();
+          gameOver = true;
+        } else if (Object.values(board).every(cell => cell !== " ")) {
+          statusDiv.textContent = "It's a draw!";
+          gameOver = true;
+        } else {
+          currentPlayer = currentPlayer === "X" ? "O" : "X";
+          statusDiv.textContent = `Current Player: ${currentPlayer}`;
+        }
       }
     }
-  }
 
-  function updateScores() {
-    scoreX.textContent = score.X;
-    scoreO.textContent = score.O;
-  }
+    function resetGame() {
+      for (let key in board) board[key] = " ";
+      cells.forEach(cell => cell.textContent = "");
+      currentPlayer = "X";
+      gameOver = false;
+      statusDiv.textContent = "Current Player: X";
+    }
 
-  function resetGame() {
-    for (let key in board) board[key] = " ";
-    cells.forEach(cell => cell.textContent = "");
-    currentPlayer = "X";
-    gameOver = false;
-    statusDiv.textContent = "Current Player: X";
-  }
-
-  cells.forEach(cell => {
-    cell.onclick = handleClick;
-  });
-</script>
+    cells.forEach(cell => {
+      cell.onclick = handleClick;
+    });
+  </script>
+</body>
+</html>
 
